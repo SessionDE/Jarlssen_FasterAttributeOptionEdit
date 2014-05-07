@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+* @author  Tsvetan Stoychev <tsvetan.stoychev@jarlssen.de>
+* @website http://www.jarlssen.de
+* @license http://opensource.org/licenses/osl-3.0.php Open Software Licence 3.0 (OSL-3.0)
+*/
+-->
+<config>
+    <modules>
+        <Jarlssen_FasterAttributeOptionEdit>
+            <version>1.0.0</version>
+        </Jarlssen_FasterAttributeOptionEdit>
+    </modules>
+    <global>
+        <blocks>
+            <adminhtml>
+                <rewrite>
+                    <catalog_product_attribute_edit_tab_options>Jarlssen_FasterAttributeOptionEdit_Block_Adminhtml_AttributeOptionsFix</catalog_product_attribute_edit_tab_options>
+                </rewrite>
+            </adminhtml>
+        </blocks>
+    </global>
+</config>

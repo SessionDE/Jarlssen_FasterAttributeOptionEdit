@@ -1,0 +1,492 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *
+ * @author  Magento Core Team ( respect )
+ * @author  Tsvetan Stoychev <tsvetan.stoychev@jarlssen.de>
+ */
+?>
+<?php
+/**
+ * Attribute options control
+ *
+ * @see Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options
+ */
+$attributeType = $this->getAttributeObject()->getFrontendInput();
+$defaultChooserInputType = '';
+if($attributeType == 'multiselect') {
+    $defaultChooserInputType = "checkbox";
+} else {
+    $defaultChooserInputType = "radio";
+}
+?>
+<div>
+    <ul class="messages">
+        <li class="notice-msg">
+            <ul>
+                <li><?php echo Mage::helper('catalog')->__('If you do not specify an option value for a specific store view then the default (Admin) value will be used.') ?></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<div class="entity-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper('catalog')->__('Manage Titles (Size, Color, etc.)') ?></h4>
+    </div>
+    <div class="box">
+        <div class="hor-scroll">
+            <table class="dynamic-grid" cellspacing="0" id="attribute-labels-table">
+                <tr>
+                    <?php foreach ($this->getStores() as $_store): ?>
+                        <th><?php echo $_store->getName() ?></th>
+                    <?php endforeach; ?>
+                </tr>
+                <tr>
+                    <?php $_labels = $this->getLabelValues() ?>
+                    <?php foreach ($this->getStores() as $_store): ?>
+                        <td>
+                            <input class="input-text<?php if($_store->getId()==0): ?> required-option<?php endif; ?>" type="text" name="frontend_label[<?php echo $_store->getId() ?>]" value="<?php echo $this->htmlEscape($_labels[$_store->getId()]) ?>"<?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/>
+                        </td>
+                    <?php endforeach; ?>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<br/>
+<div class="entity-edit" id="matage-options-panel">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper('catalog')->__('Manage Options (values of your attribute)') ?></h4>
+    </div>
+    <div class="box">
+        <div class="hor-scroll">
+            <table class="dynamic-grid" cellspacing="0"  cellpadding="0" id="attribute-options">
+                <tr id="attribute-options-table">
+                    <?php foreach ($this->getStores() as $_store): ?>
+                        <th><?php echo $_store->getName() ?></th>
+                    <?php endforeach; ?>
+                    <th><?php echo Mage::helper('catalog')->__('Position') ?></th>
+                    <th class="nobr a-center"><?php echo Mage::helper('catalog')->__('Is Default') ?></th>
+                    <th>
+                        <?php if (!$this->getReadOnly()):?>
+                            <?php echo $this->getAddNewButtonHtml() ?>
+                        <?php endif;?>
+                    </th>
+                </tr>
+                <tr class="no-display template" id="row-template">
+                    <?php foreach ($this->getStores() as $_store): ?>
+                        <td><input name="option[value][{{id}}][<?php echo $_store->getId() ?>]" value="{{store<?php echo $_store->getId() ?>}}" class="input-text<?php if($_store->getId()==0): ?> required-option<?php endif; ?>" type="text" <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/></td>
+                    <?php endforeach; ?>
+                    <td class="a-center"><input class="input-text" type="text" name="option[order][{{id}}]" value="{{sort_order}}" <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/></td>
+                    <td><input class="input-radio" type="radio" name="default[]" value="{{id}}" <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/></td>
+                    <td class="a-left">
+                        <input type="hidden" class="delete-flag" name="option[delete][{{id}}]" value="" />
+                        <?php if (!$this->getReadOnly()):?>
+                            <?php echo $this->getDeleteButtonHtml() ?>
+                        <?php endif;?>
+                    </td>
+                </tr>
+                <?php
+                    $optionValues = $this->getOptionValues();
+                    foreach ($optionValues as $_value):
+                ?>
+                    <?php if($_value->getChecked()) : ?>
+                        <tr class="option-row">
+                            <?php foreach ($this->getStores() as $_store): ?>
+                                <td><input name="option[value][<?php echo $_value->getId() ?>][<?php echo $_store->getId() ?>]" value="<?php echo $_value->getData('store' . $_store->getId()) ?>" class="input-text<?php if($_store->getId()==0): ?> required-option<?php endif; ?>" type="text" <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/></td>
+                            <?php endforeach; ?>
+                            <td class="a-center"><input class="input-text" type="text" name="option[order][<?php echo $_value->getId() ?>]" value="<?php echo $_value->getSortOrder() ?>" <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/></td>
+                            <td class="a-center default-checkbox">
+                                <input class="input-radio" type="<?php echo $defaultChooserInputType; ?>" name="default[]" value="<?php echo $_value->getId() ?>" checked="checked" />
+                            </td>
+                            <td class="a-left">
+                                <input type="hidden" class="delete-flag" name="option[delete][<?php echo $_value->getId() ?>]" value="" />
+                                <?php if (!$this->getReadOnly()):?>
+                                    <?php echo $this->getDeleteButtonHtml() ?>
+                                <?php endif;?>
+                            </td>
+                        </tr>
+                    <?php else : ?>
+                    <tr class="option-row">
+                        <?php foreach ($this->getStores() as $_store): ?>
+                            <td>
+                                <div class="replace-content pseudo-input input-text <?php if($_store->getId()==0): ?> required-option<?php endif; ?>" id="option[value][<?php echo $_value->getId() ?>][<?php echo $_store->getId() ?>]"><?php echo $_value->getData('store' . $_store->getId()) ?></div>
+                            </td>
+                        <?php endforeach; ?>
+                        <td>
+                            <div class="replace-content pseudo-input" id="option[order][<?php echo $_value->getId() ?>]"><?php echo $_value->getSortOrder() ?></div>
+                        </td>
+                        <td class="a-center default-checkbox">
+                            <div id="option_<?php echo $_value->getId() ?>" class="checkbox-radio-container replace-content">
+                                <?php if($_value->getChecked()) : ?>
+                                    <input class="input-radio" type="<?php echo $defaultChooserInputType; ?>" name="default[]" value="<?php echo $_value->getId() ?>" checked <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/>
+                                <?php else : ?>
+                                    <?php if('radio' == $defaultChooserInputType) : ?>
+                                        <span class="fake-radio"></span>
+                                    <?php else : ?>
+                                        <span class="fake-checkbox"></span>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
+                        </td>
+                        <td class="a-left actions-column" id="delete_button_container_<?php echo $_value->getId() ?>">
+                            <div id="option[delete][<?php echo $_value->getId() ?>]" title="<?php echo $this->__('Delete') ?>" class="scalable left pseudo-delete-option">
+                                <span class="pseudo-delete-button" option_id="<?php echo $_value->getId(); ?>">
+                                    <span>
+                                        <span><?php echo $this->__('Delete') ?></span>
+                                    </span>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endif; ?>
+                    <?php endforeach; ?>
+            </table>
+        </div>
+        <input type="hidden" id="option-count-check" value="" />
+    </div>
+</div>
+<script type="text/javascript">
+    //<![CDATA[
+    decorateTable('attribute-options');
+    //]]>
+</script>
+
+<script type="text/javascript">
+    //<![CDATA[
+    var optionDefaultInputType = '<?php echo $defaultChooserInputType; ?>';
+
+    // IE removes quotes from element.innerHTML whenever it thinks they're not needed, which breaks html.
+    var templateText =
+        '<tr class="option-row">'+
+            <?php foreach ($this->getStores() as $_store): ?>
+            '<td><input name="option[value][{{id}}][<?php echo $_store->getId() ?>]" value="{{store<?php echo $_store->getId() ?>}}" class="input-text<?php if($_store->getId()==0): ?> required-option<?php endif; ?>" type="text" <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/><\/td>'+
+            <?php endforeach; ?>
+            '<td><input class="input-text" type="text" name="option[order][{{id}}]" value="{{sort_order}}" <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/><\/td>'+
+            '<td class="a-center"><input class="input-radio" type="{{intype}}" name="default[]" value="{{id}}" {{checked}} <?php if ($this->getReadOnly()):?> disabled="disabled"<?php endif;?>/><\/td>'+
+            '<td class="a-left" id="delete_button_container_{{id}}">'+
+            '<input type="hidden" class="delete-flag" name="option[delete][{{id}}]" value="" />'+
+            <?php if (!$this->getReadOnly()):?>
+            '<?php echo $this->getDeleteButtonHtml() ?>'+
+            <?php endif;?>
+            '<\/td>'+
+            '<\/tr>';
+
+    var attributeOption = {
+        table : $('attribute-options-table'),
+        templateSyntax : /(^|.|\r|\n)({{(\w+)}})/,
+        templateText : templateText,
+        itemCount : <?php echo count($optionValues); ?>,
+        totalItems : <?php echo count($optionValues); ?>,
+        isReadOnly: <?php echo (int)$this->getReadOnly(); ?>,
+        add : function(data) {
+            this.template = new Template(this.templateText, this.templateSyntax);
+            var isNewOption = false;
+
+            if(!data.id){
+                data = {};
+                data.id  = 'option_'+this.itemCount;
+                isNewOption = true;
+            }
+            if (!data.intype) {
+                data.intype = optionDefaultInputType;
+            }
+
+            Element.insert(this.table, {after: this.template.evaluate(data)});
+            if (isNewOption && !this.isReadOnly) {
+                this.enableNewOptionDeleteButton(data.id);
+            }
+
+            this.bindRemoveButtons();
+            this.itemCount++;
+            this.totalItems++;
+            this.updateItemsCountField();
+        },
+        remove : function(event){
+            var element = $(Event.findElement(event, 'tr')); // !!! Button already
+            // have table parent in safari
+            // Safari workaround
+            element.ancestors().each(function(parentItem) {
+                if (parentItem.hasClassName('option-row')) {
+                    element = parentItem;
+                    throw $break;
+                } else if (parentItem.hasClassName('box')) {
+                    throw $break;
+                }
+            });
+
+            if(element) {
+                var elementFlags = element.getElementsByClassName('delete-flag');
+                if(elementFlags[0]) {
+                    elementFlags[0].value=1;
+                }
+
+                element.addClassName('no-display');
+                element.addClassName('template');
+                element.hide();
+                this.totalItems--;
+                this.updateItemsCountField();
+            }
+        },
+        edit : function(event) {
+            var selectedElementWrapper = $(Event.findElement(event, 'td'));
+
+            this.activateOptionInputs(event);
+
+            var selectedElements = $(selectedElementWrapper).select('input');
+            var selectedElement = selectedElements[0];
+            var elementType = $(selectedElement).readAttribute('type');
+
+            if('text' == elementType) {
+                $(selectedElement).focus();
+            }
+
+            if('radio' == elementType) {
+                this.checkRadio(selectedElement);
+            }
+
+            if('checkbox' == elementType) {
+                this.checkCheckBox(selectedElement);
+            }
+        },
+        activateOptionInputs : function(event) {
+            var element = $(Event.findElement(event, 'tr'));
+            // have table parent in safari
+            // Safari workaround
+            element.ancestors().each(function(parentItem) {
+                if (parentItem.hasClassName('option-row')) {
+                    element = parentItem;
+                    throw $break;
+                } else if (parentItem.hasClassName('box')) {
+                    throw $break;
+                }
+            });
+
+            if(element) {
+                var tdElements = $(element).select('div.replace-content');
+
+                for(var i = 0; i < tdElements.length; i++) {
+                    // Creates the checkbox
+                    if($(tdElements[i]).hasClassName('checkbox-radio-container')) {
+                        var value = $(tdElements[i]).readAttribute('id').replace('option_', '');
+                        $(tdElements[i]).replace('<input class="input-radio" type="' + optionDefaultInputType + '" name="default[]" value="' + value + '" />');
+                        continue;
+                    }
+
+                    var value = $(tdElements[i]).innerHTML;
+                    var name = $(tdElements[i]).readAttribute('id');
+                    var kclass = $(tdElements[i]).readAttribute('class');
+
+                    $(tdElements[i]).replace('<input class="' + kclass + '" name="' + name + '" value="' + value + '" />');
+                }
+            }
+        },
+        checkRadio : function(element){
+            element.writeAttribute('checked', true);
+        },
+        checkCheckBox : function(element)
+        {
+            element.writeAttribute('checked', 'checked');
+        },
+        rowMouseOver : function(event){
+            var element = Event.findElement(event, 'tr');
+
+            Element.addClassName(element, 'on-mouse');
+
+            if (!Element.hasClassName('pointer')
+                && (this.rowClickCallback !== openGridRow || element.title)) {
+                if (element.title) {
+                    Element.addClassName(element, 'pointer');
+                }
+            }
+        },
+        rowMouseOut : function(event){
+            var element = Event.findElement(event, 'tr');
+            Element.removeClassName(element, 'on-mouse');
+        },
+        updateItemsCountField: function() {
+            if (this.totalItems > 0) {
+                $('option-count-check').value = '1';
+            } else {
+                $('option-count-check').value = '';
+            }
+        },
+        enableNewOptionDeleteButton : function(id) {
+            $$('#delete_button_container_' + id + ' button').each(function(button) {
+                button.enable();
+                button.removeClassName('disabled');
+            });
+        },
+        pseudoRemove : function(event) {
+
+            this.activateOptionInputs(event);
+            var fireElement = $(Event.findElement(event));
+
+            //Searching for the element, that holds the the option_id
+            if(!fireElement.hasClassName('pseudo-delete-button')) {
+                fireElement.ancestors().each(function(parentItem) {
+                    if (parentItem.hasClassName('pseudo-delete-button')) {
+                        fireElement = parentItem;
+                        throw $break;
+                    }
+                });
+            }
+
+            var element = $(Event.findElement(event, 'tr')); // !!! Button already
+            // have table parent in safari
+            // Safari workaround
+            element.ancestors().each(function(parentItem) {
+                if (parentItem.hasClassName('option-row')) {
+                    element = parentItem;
+                    throw $break;
+                } else if (parentItem.hasClassName('box')) {
+                    throw $break;
+                }
+            });
+
+            if(element) {
+                deleteFlagInputHtml = '<input type="hidden" class="delete-flag" name="option[delete][' + $(fireElement).readAttribute('option_id') + ']" value="1" />';
+
+                $(fireElement).insert({ bottom : deleteFlagInputHtml});
+
+                element.addClassName('no-display');
+                element.addClassName('template');
+                element.hide();
+                this.totalItems--;
+                this.updateItemsCountField();
+            }
+        },
+        bindPseudoDeleteButton : function() {
+            var pseudoButtons = $$('.pseudo-delete-button');
+            for(var i=0;i<pseudoButtons.length;i++){
+                if(!$(pseudoButtons[i]).binded){
+                    $(pseudoButtons[i]).binded = true;
+                    Event.observe(pseudoButtons[i], 'click', this.pseudoRemove.bind(this));
+                }
+            }
+        },
+        bindRemoveButtons : function(){
+            var buttons = $$('.delete-option');
+            for(var i=0;i<buttons.length;i++){
+                if(!$(buttons[i]).binded){
+                    $(buttons[i]).binded = true;
+                    Event.observe(buttons[i], 'click', this.remove.bind(this));
+                }
+            }
+        },
+        bindEditOption : function(){
+            var buttons = $$('div.pseudo-input, span.fake-checkbox');
+            for(var i=0; i < buttons.length; i++) {
+                if(!$(buttons[i]).binded){
+                    $(buttons[i]).binded = true;
+                    Event.observe(buttons[i], 'click', this.edit.bind(this));
+                }
+            }
+        }
+    }
+
+    if($('row-template')){
+        $('row-template').remove();
+    }
+
+    attributeOption.bindRemoveButtons();
+    attributeOption.bindPseudoDeleteButton();
+    attributeOption.bindEditOption();
+
+    if($('add_new_option_button')){
+        Event.observe('add_new_option_button', 'click', attributeOption.add.bind(attributeOption));
+    }
+    Validation.addAllThese([
+        ['required-option', '<?php echo Mage::helper('catalog')->__('Failed') ?>', function(v) {
+            return !Validation.get('IsEmpty').test(v);
+        }]]);
+    Validation.addAllThese([
+        ['required-options-count', '<?php echo Mage::helper('catalog')->__('Options is required') ?>', function(v) {
+            return !Validation.get('IsEmpty').test(v);
+        }]]);
+    //]]>
+</script>
+<style>
+    .actions-column {
+        width: 200px;
+    }
+
+    .pseudo-input {
+        width: 94px;
+        height: 15px;
+        padding: 2px;
+        border-width: 1px;
+        border-style: solid;
+        border-color: #aaa #c8c8c8 #c8c8c8 #aaa;
+        background: #fff;
+        font: 12px arial, helvetica, sans-serif;
+        overflow: hidden;
+        white-space: nowrap;
+        color: #000;
+        cursor: text;
+    }
+
+    div.pseudo-delete-option {
+        border-color:#d24403 #a92000 #a92000 #d24403;
+        background:#fcaf81 url('<?php echo $this->getSkinUrl('images/cancel_btn_bg.gif') ?>') repeat-x 0 100%;
+        color:#fff;
+        border-width:1px;
+        border-style:solid;
+        padding:0 7px 1px 7px;
+        font:bold 12px arial, helvetica, sans-serif;
+        cursor:pointer;
+        text-align:center !important;
+        white-space:nowrap;
+        display: block;
+        height: 16px;
+        line-height: 16px;
+    }
+
+    div.pseudo-delete-option > span {
+        padding-left: 20px;
+        background: url('<?php echo $this->getSkinUrl('images/cancel_btn_icon.gif') ?>') no-repeat 0 100%;
+    }
+
+    div.pseudo-delete-option:hover { background: #fcaf81 url('<?php echo $this->getSkinUrl('images/cancel_btn_over_bg.gif') ?>') repeat-x 0 0; }
+    div.pseudo-delete-option:active { background: #e0612f url('<?php echo $this->getSkinUrl('images/cancel_btn_active_bg.gif') ?>') repeat-x 0 0; }
+
+    span.fake-checkbox {
+        display: inline-block;
+        background: #999;
+        width: 13px;
+        height: 13px;
+        margin: 4px auto 0;
+        background: url('data:image/gif;base64,R0lGODlhDAANAIQaAKCgoKGhoaKioqSkpKWlpaioqKqqqqurq62tra6urq+vr7CwsLe3t7i4uL6+vszMzNTU1N7e3uTk5OXl5ejo6Ovr6+zs7O3t7fX19fb29v///////////////////////yH5BAEKAB8ALAAAAAAMAA0AAAU+YNYgS2keTJZAV+u2j2JUFm3X1mFMfO8bhIhwSCQEiUgjMnlcCpXOZyAqFAQcUQdAUhgYv4RAYYKh+HwUTAgAOw==') 0 0 no-repeat;
+    }
+
+    span.fake-radio {
+        display: inline-block;
+        background: #999;
+        width: 13px;
+        height: 13px;
+        margin: 4px auto 0;
+        background: url('data:image/gif;base64,R0lGODlhDAANAKUkAKqqqra2tri4uLm5ubq6uru7u76+vr+/v8DAwMPDw8bGxsjIyMrKysvLy8zMzM3Nzc7Ozs/Pz9DQ0NfX19nZ2dra2tvb29zc3N3d3d7e3uXl5ebm5ufn5+np6evr6+zs7PPz8/j4+Pn5+fr6+v///////////////////////////////////////////////////////////////////////////////////////////////////////////////yH5BAEKAD8ALAAAAAAMAA0AQAZiwJHQkggEEhjhKELIOJ9OgUQAgUIfAyXIw+F4QMoRY+H5lMsKxwgwsT4ngFHHIHhMJthDRxhqKC4bGxZpISMUCBqJiokHFWxuTnABD5AZDwEgBgVuBAdgIh4OAQAAkx4iI0EAOw==')  0 0 no-repeat;
+    }
+</style>
