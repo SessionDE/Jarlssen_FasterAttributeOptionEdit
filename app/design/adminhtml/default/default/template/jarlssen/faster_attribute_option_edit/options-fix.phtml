@@ -259,7 +259,7 @@ if($attributeType == 'multiselect') {
             var selectedElement = selectedElements[0];
             var elementType = $(selectedElement).readAttribute('type');
 
-            if('text' == elementType) {
+            if(undefined == elementType) {
                 $(selectedElement).focus();
             }
 
@@ -397,7 +397,7 @@ if($attributeType == 'multiselect') {
             }
         },
         bindEditOption : function(){
-            var buttons = $$('div.pseudo-input, span.fake-checkbox');
+            var buttons = $$('div.pseudo-input, span.fake-checkbox, span.fake-radio');
             for(var i=0; i < buttons.length; i++) {
                 if(!$(buttons[i]).binded){
                     $(buttons[i]).binded = true;
@@ -489,4 +489,6 @@ if($attributeType == 'multiselect') {
         margin: 4px auto 0;
         background: url('data:image/gif;base64,R0lGODlhDAANAKUkAKqqqra2tri4uLm5ubq6uru7u76+vr+/v8DAwMPDw8bGxsjIyMrKysvLy8zMzM3Nzc7Ozs/Pz9DQ0NfX19nZ2dra2tvb29zc3N3d3d7e3uXl5ebm5ufn5+np6evr6+zs7PPz8/j4+Pn5+fr6+v///////////////////////////////////////////////////////////////////////////////////////////////////////////////yH5BAEKAD8ALAAAAAAMAA0AQAZiwJHQkggEEhjhKELIOJ9OgUQAgUIfAyXIw+F4QMoRY+H5lMsKxwgwsT4ngFHHIHhMJthDRxhqKC4bGxZpISMUCBqJiokHFWxuTnABD5AZDwEgBgVuBAdgIh4OAQAAkx4iI0EAOw==')  0 0 no-repeat;
     }
+
+
 </style>
