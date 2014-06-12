@@ -32,6 +32,8 @@
  * Attribute options control
  *
  * @see Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options
+ * @var $this Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Options
+ *
  */
 $attributeType = $this->getAttributeObject()->getFrontendInput();
 $defaultChooserInputType = '';
@@ -109,7 +111,11 @@ if($attributeType == 'multiselect') {
                     </td>
                 </tr>
                 <?php
-                    $optionValues = $this->getOptionValues();
+                    /**
+                     * Getting the reversed version of the values array, so we
+                     * present the the options in the correct order
+                     */
+                    $optionValues = array_reverse($this->getOptionValues(), true);
                     foreach ($optionValues as $_value):
                 ?>
                     <?php if($_value->getChecked()) : ?>
