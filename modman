@@ -1,0 +1,3 @@
+app/code/local/Jarlssen/FasterAttributeOptionEdit app/code/local/Jarlssen/FasterAttributeOptionEdit
+app/design/adminhtml/default/default/template/jarlssen/faster_attribute_option_edit app/design/adminhtml/default/default/template/jarlssen/faster_attribute_option_edit
+app/etc/modules/Jarlssen_FasterAttributeOptionEdit.xml app/etc/modules/Jarlssen_FasterAttributeOptionEdit.xml
