@@ -1,0 +1,15 @@
+{
+	"name": "jarlssen/fasterattributeoptionedit",
+	"description": "Simple Magento extension, that fixes a browser timeout / crash, when we attempt to save an attribute with thousands options from the Magento admin interface.",
+	"homepage": "https://github.com/Jarlssen/Jarlssen_FasterAttributeOptionEdit",
+	"type": "magento-module",
+	"authors": [
+		{
+			"name": "Tsvetan Stoychev",
+			"email": "info@sessiondigital.de"
+		}
+	],
+	"require": {
+		"magento-hackathon/magento-composer-installer": "*"
+	}
+}
