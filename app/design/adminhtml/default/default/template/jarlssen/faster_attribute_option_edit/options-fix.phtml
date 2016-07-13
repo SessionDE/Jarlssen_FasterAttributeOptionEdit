@@ -292,12 +292,15 @@ if($attributeType == 'multiselect') {
 
             if(element) {
                 var tdElements = $(element).select('div.replace-content');
+                var escapeQuote = function(rawStr) {
+                    return rawStr.replace(/"/g, '&quot;');
+                };
 
                 for(var i = 0; i < tdElements.length; i++) {
                     // Creates the checkbox
                     if($(tdElements[i]).hasClassName('checkbox-radio-container')) {
                         var value = $(tdElements[i]).readAttribute('id').replace('option_', '');
-                        $(tdElements[i]).replace('<input class="input-radio" type="' + optionDefaultInputType + '" name="default[]" value="' + value + '" />');
+                        $(tdElements[i]).replace('<input class="input-radio" type="' + optionDefaultInputType + '" name="default[]" value="' + escapeQuote(value) + '" />');
                         continue;
                     }
 
@@ -305,7 +308,7 @@ if($attributeType == 'multiselect') {
                     var name = $(tdElements[i]).readAttribute('id');
                     var kclass = $(tdElements[i]).readAttribute('class');
 
-                    $(tdElements[i]).replace('<input class="' + kclass + '" name="' + name + '" value="' + value + '" />');
+                    $(tdElements[i]).replace('<input class="' + kclass + '" name="' + name + '" value="' + escapeQuote(value) + '" />');
                 }
             }
         },
