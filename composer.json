@@ -9,7 +9,7 @@
 			"email": "info@sessiondigital.de"
 		}
 	],
-	"require": {
-		"magento-hackathon/magento-composer-installer": "*"
+	"suggest": {
+		"magento-hackathon/magento-composer-installer": "Allows to manage this package as a dependency"
 	}
 }
